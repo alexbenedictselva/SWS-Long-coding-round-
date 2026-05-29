@@ -7,7 +7,6 @@ const app = express();
 app.use(
     cors({
         origin: [
-            "http://localhost:5173",
             process.env.CLIENT_URL,
         ].filter(Boolean),
         credentials: true,
@@ -16,7 +15,7 @@ app.use(
 app.use(express.json());
 app.use(
     "/uploads",
-    express.static("src/uploads")
+    express.static(process.env.UPLOAD_PATH || "src/uploads")
 );
 app.use(
     "/api/notifications",
