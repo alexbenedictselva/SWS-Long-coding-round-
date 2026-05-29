@@ -1,3 +1,4 @@
+import { NavLink } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
 
 const Header = () => {
@@ -26,8 +27,34 @@ const Header = () => {
           </span>
         </div>
 
-        {/* Right side */}
-        <NotificationBell />
+        {/* Nav + Bell */}
+        <div className="flex items-center gap-2">
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `text-sm font-medium px-3 py-1.5 rounded-lg transition-colors ${
+                isActive
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              }`
+            }
+          >
+            Upload
+          </NavLink>
+          <NavLink
+            to="/notifications"
+            className={({ isActive }) =>
+              `text-sm font-medium px-3 py-1.5 rounded-lg transition-colors ${
+                isActive
+                  ? "bg-blue-50 text-blue-600"
+                  : "text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+              }`
+            }
+          >
+            History
+          </NavLink>
+          <NotificationBell />
+        </div>
       </div>
     </header>
   );
