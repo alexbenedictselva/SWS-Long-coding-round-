@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { io } from "socket.io-client";
@@ -14,11 +15,16 @@ import {
   markAllAsRead,
 } from "../api/notificationApi";
 
+const SOCKET_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const NotificationContext = createContext(null);
 
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading]         = useState(true);
+  const [isConnected, setIsConnected]     = useState(false);
+  const socketRef                         = useRef(null);
 
   // Derived — recalculates only when notifications changes
   const unreadCount = useMemo(
@@ -30,7 +36,6 @@ export const NotificationProvider = ({ children }) => {
     setIsLoading(true);
     try {
       const data = await getNotifications();
-      // Sort newest first
       setNotifications(
         [...data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
       );
@@ -41,8 +46,12 @@ export const NotificationProvider = ({ children }) => {
     }
   }, []);
 
+  // Duplicate-safe insert — checks _id before prepending
   const addNotification = useCallback((notification) => {
-    setNotifications((prev) => [notification, ...prev]);
+    setNotifications((prev) => {
+      if (prev.some((n) => n._id === notification._id)) return prev;
+      return [notification, ...prev];
+    });
   }, []);
 
   const markNotificationRead = useCallback(async (id) => {
@@ -75,17 +84,28 @@ export const NotificationProvider = ({ children }) => {
     }
   }, []);
 
-  // Alias for external refresh calls
   const refreshNotifications = fetchNotifications;
 
-  // Fetch on mount + socket setup
+  // Fetch on mount + global socket setup
   useEffect(() => {
     fetchNotifications();
 
-    const socket = io("http://localhost:5000", { transports: ["websocket"] });
+    const socket = io(SOCKET_URL, {
+      transports: ["websocket"],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    socketRef.current = socket;
+
+    socket.on("connect",       () => setIsConnected(true));
+    socket.on("disconnect",    () => setIsConnected(false));
+    socket.on("connect_error", () => setIsConnected(false));
 
     socket.on("notification", (notification) => {
       addNotification(notification);
+
       if (notification.type === "error") {
         toast.error(notification.message);
       } else if (notification.type === "info") {
@@ -96,7 +116,9 @@ export const NotificationProvider = ({ children }) => {
     });
 
     return () => {
+      socket.off("notification");
       socket.disconnect();
+      socketRef.current = null;
     };
   }, [fetchNotifications, addNotification]);
 
@@ -106,6 +128,7 @@ export const NotificationProvider = ({ children }) => {
       setNotifications,
       unreadCount,
       isLoading,
+      isConnected,
       fetchNotifications,
       addNotification,
       markNotificationRead,
@@ -116,6 +139,7 @@ export const NotificationProvider = ({ children }) => {
       notifications,
       unreadCount,
       isLoading,
+      isConnected,
       fetchNotifications,
       addNotification,
       markNotificationRead,
