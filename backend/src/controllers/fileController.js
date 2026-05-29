@@ -1,5 +1,6 @@
 import File from "../models/File.js";
-
+import createNotification
+from "../utils/createNotification.js";
 export const uploadFiles = async (req, res) => {
     try {
         const uploadedFiles = [];
@@ -15,6 +16,11 @@ export const uploadFiles = async (req, res) => {
 
             uploadedFiles.push(newFile);
         }
+        // CREATE NOTIFICATION HERE
+        await createNotification(
+            `${uploadedFiles.length} file(s) uploaded successfully`,
+            "success"
+        );
 
         res.status(201).json({
             success: true,
