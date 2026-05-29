@@ -46,21 +46,31 @@ export const NotificationProvider = ({ children }) => {
   }, []);
 
   const markNotificationRead = useCallback(async (id) => {
+    // Optimistic update
+    setNotifications((prev) =>
+      prev.map((n) => (n._id === id ? { ...n, read: true } : n))
+    );
     try {
       await markAsRead(id);
-      setNotifications((prev) =>
-        prev.map((n) => (n._id === id ? { ...n, read: true } : n))
-      );
+      toast.success("Notification marked as read");
     } catch (error) {
+      // Rollback on failure
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, read: false } : n))
+      );
       toast.error(error.message || "Failed to mark notification as read");
     }
   }, []);
 
   const markAllNotificationsRead = useCallback(async () => {
+    // Optimistic update
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
     try {
       await markAllAsRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      toast.success("All notifications marked as read");
     } catch (error) {
+      // Rollback on failure
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: false })));
       toast.error(error.message || "Failed to mark all notifications as read");
     }
   }, []);

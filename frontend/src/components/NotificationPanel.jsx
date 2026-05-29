@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNotifications } from "../context/NotificationContext";
 import NotificationItem from "./NotificationItem";
 
@@ -6,6 +6,13 @@ const NotificationPanel = ({ onClose }) => {
   const { notifications, markAllNotificationsRead, isLoading } =
     useNotifications();
   const panelRef = useRef(null);
+  const [isMarkingAll, setIsMarkingAll] = useState(false);
+
+  const handleMarkAllRead = async () => {
+    setIsMarkingAll(true);
+    await markAllNotificationsRead();
+    setIsMarkingAll(false);
+  };
 
   // Close on outside click
   useEffect(() => {
@@ -62,10 +69,11 @@ const NotificationPanel = ({ onClose }) => {
         </h3>
         {notifications.some((n) => !n.read) && (
           <button
-            onClick={markAllNotificationsRead}
-            className="text-xs text-blue-600 hover:text-blue-800 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded"
+            onClick={handleMarkAllRead}
+            disabled={isMarkingAll}
+            className="text-xs text-blue-600 hover:text-blue-800 disabled:text-blue-300 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded transition-colors"
           >
-            Mark All Read
+            {isMarkingAll ? "Marking..." : "Mark All Read"}
           </button>
         )}
       </div>
