@@ -3,48 +3,76 @@ import { useNotifications } from "../context/NotificationContext";
 import NotificationItem from "./NotificationItem";
 
 const NotificationPanel = ({ onClose }) => {
-  const { notifications, markAllNotificationsRead } = useNotifications();
+  const { notifications, markAllNotificationsRead, isLoading } =
+    useNotifications();
   const panelRef = useRef(null);
 
   // Close on outside click
   useEffect(() => {
-    const handleClickOutside = (e) => {
+    const handleOutsideClick = (e) => {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
         onClose();
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [onClose]);
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center py-12 gap-2 text-gray-400">
+          <svg className="w-5 h-5 animate-spin text-blue-400" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+          <p className="text-sm">Loading notifications...</p>
+        </div>
+      );
+    }
+
+    if (!notifications.length) {
+      return (
+        <div className="flex flex-col items-center justify-center py-12 gap-2 text-gray-400">
+          <span className="text-4xl">🔔</span>
+          <p className="text-sm font-medium">No notifications yet</p>
+        </div>
+      );
+    }
+
+    return notifications.map((n) => (
+      <NotificationItem key={n._id} notification={n} />
+    ));
+  };
 
   return (
     <div
       ref={panelRef}
-      className="absolute right-0 top-12 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-gray-200 z-50 flex flex-col max-h-[480px]"
+      className="absolute right-0 top-12 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-gray-200 z-50 flex flex-col overflow-hidden"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-        <h3 className="font-semibold text-gray-800">Notifications</h3>
-        <button
-          onClick={markAllNotificationsRead}
-          className="text-xs text-blue-600 hover:text-blue-800 font-medium"
-        >
-          Mark all read
-        </button>
+      {/* Panel Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
+        <h3 className="font-semibold text-gray-800 text-sm">
+          Notifications
+          {notifications.length > 0 && (
+            <span className="ml-1.5 text-gray-400 font-normal">
+              ({notifications.length})
+            </span>
+          )}
+        </h3>
+        {notifications.some((n) => !n.read) && (
+          <button
+            onClick={markAllNotificationsRead}
+            className="text-xs text-blue-600 hover:text-blue-800 font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 rounded"
+          >
+            Mark All Read
+          </button>
+        )}
       </div>
 
-      {/* List */}
-      <div className="overflow-y-auto flex-1 divide-y divide-gray-100">
-        {notifications.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-            <span className="text-3xl mb-2">🔔</span>
-            <p className="text-sm">No notifications</p>
-          </div>
-        ) : (
-          notifications.map((n) => (
-            <NotificationItem key={n._id} notification={n} />
-          ))
-        )}
+      {/* Scrollable List */}
+      <div className="overflow-y-auto max-h-[400px] divide-y divide-gray-100">
+        {renderContent()}
       </div>
     </div>
   );
