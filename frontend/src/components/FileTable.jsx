@@ -96,7 +96,7 @@ const FileTable = ({ refreshTrigger }) => {
       const status = STATUS_CONFIG[file.uploadStatus] ?? STATUS_CONFIG.complete;
       const fileUrl = file.fileUrl?.startsWith("http")
         ? file.fileUrl
-        : `http://localhost:5000/${file.fileUrl}`;
+        : `${import.meta.env.VITE_API_URL || "http://localhost:5000"}/${file.fileUrl}`;
 
       return (
         <tr key={file._id} className="hover:bg-blue-50/30 transition-colors">

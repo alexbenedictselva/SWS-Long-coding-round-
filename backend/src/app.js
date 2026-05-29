@@ -4,8 +4,15 @@ import cors from "cors";
 import fileRoutes from "./routes/fileRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 const app = express();
-
-app.use(cors());
+app.use(
+    cors({
+        origin: [
+            "http://localhost:5173",
+            process.env.CLIENT_URL,
+        ].filter(Boolean),
+        credentials: true,
+    })
+);
 app.use(express.json());
 app.use(
     "/uploads",
