@@ -20,7 +20,6 @@ const UploadPage = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadItems, setUploadItems] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [showBulkBanner, setShowBulkBanner] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   const handleFilesSelected = (files) => {
@@ -36,9 +35,7 @@ const UploadPage = () => {
   const handleUpload = async () => {
     if (!selectedFiles.length) return;
 
-    const isBulk = selectedFiles.length > 3;
     setIsUploading(true);
-    if (isBulk) setShowBulkBanner(true);
 
     // Mark all as uploading
     setUploadItems((prev) =>
@@ -70,14 +67,19 @@ const UploadPage = () => {
       toast.error("Upload failed");
     } finally {
       setIsUploading(false);
-      setShowBulkBanner(false);
     }
   };
 
   return (
     <div className="flex flex-col gap-6">
       {/* Bulk Banner */}
-      {showBulkBanner && <BulkUploadBanner fileCount={selectedFiles.length} />}
+      {selectedFiles.length > 3 && (
+        <BulkUploadBanner
+          fileCount={selectedFiles.length}
+          isUploading={isUploading}
+          uploadItems={uploadItems}
+        />
+      )}
 
       {/* Upload Card */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
