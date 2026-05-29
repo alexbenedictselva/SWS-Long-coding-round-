@@ -1,27 +1,35 @@
 # Document Management System
 
-A full-stack Document Management System built using the MERN stack that supports PDF uploads, real-time upload notifications, bulk upload handling, and a persistent notification center.
+A full-stack MERN application that allows users to upload and manage PDF documents with real-time notifications. The system supports single and bulk file uploads, upload progress tracking, document management, and a persistent notification center powered by Socket.IO.
 
 ---
 
-## Features
+# Features
 
-### File Upload
+## File Upload
 
 * Upload single PDF files
 * Upload multiple PDF files simultaneously
-* Drag and drop support
-* Individual upload progress tracking
-* Upload status tracking
+* Drag-and-drop file upload support
+* Individual progress tracking for each file
+* Upload status tracking:
 
   * Pending
   * Uploading
   * Complete
   * Failed
 
-### Document Management
+## Smart Bulk Uploads
 
-* Store uploaded PDF files on the server
+* Normal upload flow for 3 or fewer files
+* Background processing workflow for more than 3 files
+* Bulk upload banner
+* Collapsible upload progress details
+* Real-time completion notifications
+
+## Document Management
+
+* Store uploaded PDF files
 * Store file metadata in MongoDB
 * View uploaded documents
 * Download uploaded documents
@@ -33,35 +41,29 @@ A full-stack Document Management System built using the MERN stack that supports
   * Upload Date
   * Upload Status
 
-### Smart Bulk Uploads
-
-* Normal upload flow for 3 or fewer files
-* Background processing UI for more than 3 files
-* Collapsible upload details panel
-* Real-time completion updates
-
-### Notification Center
+## Notification Center
 
 * Persistent notification storage
 * Notification history
 * Unread notification badge
-* Mark notification as read
+* Mark individual notifications as read
 * Mark all notifications as read
 * Notifications persist after page refresh
 
-### Real-Time Notifications
+## Real-Time Notifications
 
 * Socket.IO integration
 * Instant notification delivery
-* Real-time notification badge updates
-* Real-time toast messages
+* Real-time unread count updates
+* Real-time notification panel updates
+* Toast notifications
 * Works across application pages
 
 ---
 
-## Tech Stack
+# Technologies Used
 
-### Frontend
+## Frontend
 
 * React
 * Vite
@@ -70,45 +72,31 @@ A full-stack Document Management System built using the MERN stack that supports
 * React Router DOM
 * Socket.IO Client
 * React Hot Toast
+* React Dropzone
 
-### Backend
+## Backend
 
 * Node.js
 * Express.js
 * Socket.IO
 * Multer
 
-### Database
+## Database
 
 * MongoDB Atlas
 * Mongoose
 
-### Deployment
+## Deployment
 
-* Frontend: Vercel
-* Backend: Render
-* Database: MongoDB Atlas
-
----
-
-## Project Architecture
-
-```text
-Frontend (React)
-        │
-        ▼
-Backend API (Express)
-        │
-        ├──────────► MongoDB Atlas
-        │
-        └──────────► Socket.IO
-```
+* Vercel (Frontend)
+* Render (Backend)
+* MongoDB Atlas (Database)
 
 ---
 
-## Folder Structure
+# Project Structure
 
-### Backend
+## Backend
 
 ```text
 backend/
@@ -126,7 +114,7 @@ backend/
 │   └── server.js
 ```
 
-### Frontend
+## Frontend
 
 ```text
 frontend/
@@ -144,9 +132,169 @@ frontend/
 
 ---
 
-## Database Schema
+# Project Setup Instructions
 
-### File Collection
+## Clone the Repository
+
+```bash
+git clone <repository-url>
+cd project
+```
+
+---
+
+## Backend Setup
+
+Navigate to backend:
+
+```bash
+cd backend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file:
+
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+```
+
+Start backend server:
+
+```bash
+npm run dev
+```
+
+Backend will run on:
+
+```text
+http://localhost:5000
+```
+
+---
+
+## Frontend Setup
+
+Navigate to frontend:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create a `.env` file:
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+Start frontend:
+
+```bash
+npm run dev
+```
+
+Frontend will run on:
+
+```text
+http://localhost:5173
+```
+
+---
+
+# Run / Build Commands
+
+## Backend
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Start production server:
+
+```bash
+npm start
+```
+
+---
+
+## Frontend
+
+Start development server:
+
+```bash
+npm run dev
+```
+
+Build production bundle:
+
+```bash
+npm run build
+```
+
+Preview production build:
+
+```bash
+npm run preview
+```
+
+---
+
+# API Endpoints
+
+## File APIs
+
+### Upload Files
+
+```http
+POST /api/files/upload
+```
+
+### Get All Files
+
+```http
+GET /api/files
+```
+
+---
+
+## Notification APIs
+
+### Get Notifications
+
+```http
+GET /api/notifications
+```
+
+### Mark Notification as Read
+
+```http
+PATCH /api/notifications/:id/read
+```
+
+### Mark All Notifications as Read
+
+```http
+PATCH /api/notifications/read-all
+```
+
+---
+
+# Database Schema
+
+## File Collection
 
 ```js
 {
@@ -159,7 +307,7 @@ frontend/
 }
 ```
 
-### Notification Collection
+## Notification Collection
 
 ```js
 {
@@ -172,120 +320,65 @@ frontend/
 
 ---
 
-## API Endpoints
-
-### File APIs
-
-| Method | Endpoint          | Description   |
-| ------ | ----------------- | ------------- |
-| POST   | /api/files/upload | Upload files  |
-| GET    | /api/files        | Get all files |
-
-### Notification APIs
-
-| Method | Endpoint                    | Description                    |
-| ------ | --------------------------- | ------------------------------ |
-| GET    | /api/notifications          | Get notifications              |
-| PATCH  | /api/notifications/:id/read | Mark notification as read      |
-| PATCH  | /api/notifications/read-all | Mark all notifications as read |
-
----
-
-## Real-Time Notification Flow
+# Real-Time Notification Flow
 
 1. User uploads files.
 2. Backend processes files.
 3. Notification is saved in MongoDB.
 4. Socket.IO emits a notification event.
 5. Frontend receives the event instantly.
-6. Notification bell updates.
+6. Notification badge updates.
 7. Toast notification appears.
 8. Notification panel updates automatically.
 
 ---
 
-## Local Setup
+# Assumptions & Notes
 
-### Clone Repository
-
-```bash
-git clone <repository-url>
-cd project
-```
-
-### Backend Setup
-
-```bash
-cd backend
-
-npm install
-```
-
-Create:
-
-```env
-PORT=5000
-MONGO_URI=your_mongodb_connection_string
-```
-
-Start backend:
-
-```bash
-npm run dev
-```
-
-### Frontend Setup
-
-```bash
-cd frontend
-
-npm install
-```
-
-Create:
-
-```env
-VITE_API_URL=http://localhost:5000
-```
-
-Start frontend:
-
-```bash
-npm run dev
-```
+* Only PDF files are allowed for upload.
+* File uploads are handled using Multer.
+* Uploaded files are stored on the server.
+* Notifications are stored in MongoDB.
+* Real-time notifications are implemented using Socket.IO.
+* Uploading more than 3 files triggers the bulk upload workflow.
+* Notification history persists across page refreshes.
+* Notifications are fetched from MongoDB and not stored in localStorage.
+* Socket connection is maintained globally to ensure notifications are received across pages.
+* Local file storage is used for development and assessment purposes.
 
 ---
 
-## Deployment
+# Future Improvements
 
-### Frontend
+* AWS S3 integration
+* Cloudinary integration
+* User authentication
+* Role-based access control
+* Search and filtering
+* Pagination
+* Unit testing
+* File categorization
 
-Deployed on Vercel.
+---
 
-### Backend
+# Deployment
 
-Deployed on Render.
+## Frontend
 
-### Database
+Hosted on Vercel.
+
+## Backend
+
+Hosted on Render.
+
+## Database
 
 Hosted on MongoDB Atlas.
 
 ---
 
-## Future Improvements
-
-* AWS S3 integration
-* Cloudinary file storage
-* User authentication
-* Role-based access control
-* Search and filtering
-* Pagination
-* Unit and integration tests
-
----
-
-## Author
+# Author
 
 Alex
 
-Built as part of a Full Stack Development assessment project.
+Built as part of a Full Stack Development Assessment Project.
