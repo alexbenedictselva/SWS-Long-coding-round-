@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket Test</title>
+</head>
+<body>
+
+<h2>Socket Connected</h2>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+
+const socket =
+    io("http://localhost:5000");
+
+socket.on(
+    "notification",
+    (data) => {
+
+        console.log(
+            "Notification Received",
+            data
+        );
+
+    }
+);
+
+</script>
+
+</body>
+</html>
