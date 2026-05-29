@@ -1,12 +1,12 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
 
 const Header = () => {
   return (
     <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo + Name */}
-        <div className="flex items-center gap-3">
+        {/* Logo + Name — clicking navigates to / */}
+        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center">
             <svg
               className="w-5 h-5 text-white"
@@ -25,7 +25,7 @@ const Header = () => {
           <span className="text-lg font-semibold text-gray-900 tracking-tight">
             Document Manager
           </span>
-        </div>
+        </Link>
 
         {/* Nav + Bell */}
         <div className="flex items-center gap-2">

@@ -5,13 +5,25 @@ import NotificationsPage from "./pages/NotificationsPage";
 
 const App = () => {
   return (
-    <MainLayout>
-      <Routes>
-        <Route path="/"              element={<UploadPage />} />
-        <Route path="/notifications" element={<NotificationsPage />} />
-        <Route path="*"              element={<Navigate to="/" replace />} />
-      </Routes>
-    </MainLayout>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <MainLayout title="Document Upload Dashboard">
+            <UploadPage />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/notifications"
+        element={
+          <MainLayout title="Notification Center">
+            <NotificationsPage />
+          </MainLayout>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 };
 

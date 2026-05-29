@@ -1,6 +1,11 @@
+import { useEffect } from "react";
 import Header from "../components/Header";
 
-const MainLayout = ({ children }) => {
+const MainLayout = ({ children, title }) => {
+  useEffect(() => {
+    if (title) document.title = title;
+  }, [title]);
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
