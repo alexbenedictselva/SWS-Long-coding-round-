@@ -82,13 +82,10 @@ const UploadPage = () => {
       {/* Upload Card */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
         <h2 className="text-base font-semibold text-gray-800 mb-4">Upload PDFs</h2>
-        <FileUpload onFilesSelected={handleFilesSelected} />
+        <FileUpload onFilesSelected={handleFilesSelected} selectedFiles={selectedFiles} />
 
         {selectedFiles.length > 0 && (
-          <div className="mt-4 flex items-center justify-between">
-            <p className="text-sm text-gray-500">
-              {selectedFiles.length} file{selectedFiles.length > 1 ? "s" : ""} selected
-            </p>
+          <div className="mt-4 flex justify-end">
             <button
               onClick={handleUpload}
               disabled={isUploading}
